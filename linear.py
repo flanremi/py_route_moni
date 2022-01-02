@@ -1,2 +1,5 @@
-from scipy import optimize
+from Model import *
 
+
+matrix = createMartixLW()
+print(1)
