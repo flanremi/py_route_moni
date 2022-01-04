@@ -1,14 +1,22 @@
 # 链路容量矩阵
+import random
+
 CONSTANT_C = 'constant_c'
+# 流数
+CONSTANT_F = 'constant_f'
+# 包的大小
+CONSTANT_DK = 'constant_dk'
+# 卫星个数
+CONSTANT_S = 'constant_s'
 # 全链路矩阵
-MATRIX_2_L = 'matrix_2_l'
+ARRAY_L = 'array_l'
 # 邻接矩阵
 MATRIX_2_LM = 'matrix_2_lm'
 # 流量大小
 ARRAY_DK = 'array_dk'
 
-SX = 24
-SY = 66
+SX = 3
+SY = 4
 
 
 def position2xy(pos: int):
@@ -55,5 +63,28 @@ class Model(dict):
         # 修改dic
         self.update(dic)
         ms = createMartixLW()
-        self.update({MATRIX_2_L: ms[1]})
+        self.update({ARRAY_L: ms[1]})
         self.update({MATRIX_2_LM: ms[0]})
+        self.update({CONSTANT_S: SX * SY})
+
+    def createTaskAllocate(self, point: list):
+        route = []
+        remain = self.get(CONSTANT_F)
+        road = int(len(point) * (len(point) - 1) / 2)
+        for i in range(len(point)):
+            for j in range(len(point)):
+                if j > i:
+                    tasknum = random.randint(0, int(remain / road * 2))
+                    route.append((point[i], point[j], tasknum))
+                    remain -= tasknum
+                    road -= 1
+        route[len(route) - 1] = (route[len(route) - 1][0], route[len(route) - 1][1], route[len(route) - 1][2] + remain)
+        return route
+
+    def link2position(self, l: int):
+        for i in range(self.get(CONSTANT_S)):
+            for j in range(self.get(CONSTANT_S)):
+                if i > j:
+                    continue
+                if l == self.get(MATRIX_2_LM)[i][j]:
+                    return i, j
