@@ -24,29 +24,6 @@ def loadFDK(n, dic: dict):
         pass
 
 
-def getAdjArray(position: int):
-    (x, y) = position2xy(position)
-    # 邻接8个卫星的序号
-    # →
-    p1 = xy2position(x, (y + 1) % SY)
-    # ←
-    p2 = xy2position(x, (y + SY - 1) % SY)
-    # 左下
-    p3 = xy2position((x + SX - 1) % SX, (y + SY - 1) % SY)
-    # 右上
-    p4 = xy2position((x + 1) % SX, (y + 1) % SY)
-    # 上
-    p5 = xy2position((x + 1) % SX, y)
-    # 下
-    p6 = xy2position((x + SX - 1) % SX, y)
-    # 右下
-    p7 = xy2position((x + SX - 1) % SX, (y + 1) % SY)
-    # 左上
-    p8 = xy2position((x + 1) % SX, (y + SY - 1) % SY)
-    p = [p1, p2, p3, p4, p5, p6, p7, p8]
-    return p
-
-
 def checkup(zijk, links):
     for k in range(imodel.get(CONSTANT_F)):
         for j in range(len(imodel.get(ARRAY_L))):
@@ -63,6 +40,17 @@ def checkup(zijk, links):
         # print(str(p) + str(pos) + ":有" + str(s) + "条链路")
         if s > 6:
             print(str(p) + str(pos) + ":错误，有" + str(s) + "条链路 > 6")
+    ls = [0 for i in range(len(imodel.get(ARRAY_L)))]
+    for k in range(imodel.get(CONSTANT_F)):
+        for j in range(len(imodel.get(ARRAY_L))):
+            for i in range(2):
+                if zijk[k][j][i] == 1:
+                    ls[j] +=1
+    max_l = 0
+    for l in ls:
+        if l >= max_l:
+            max_l = l
+    print(max_l)
 
 
 def linearOpt(dic):

@@ -56,6 +56,29 @@ def createMartixLW():
     return matrix, mapping
 
 
+def getAdjArray(position: int):
+    (x, y) = position2xy(position)
+    # 邻接8个卫星的序号
+    # →
+    p1 = xy2position(x, (y + 1) % SY)
+    # ←
+    p2 = xy2position(x, (y + SY - 1) % SY)
+    # 左下
+    p3 = xy2position((x + SX - 1) % SX, (y + SY - 1) % SY)
+    # 右上
+    p4 = xy2position((x + 1) % SX, (y + 1) % SY)
+    # 上
+    p5 = xy2position((x + 1) % SX, y)
+    # 下
+    p6 = xy2position((x + SX - 1) % SX, y)
+    # 右下
+    p7 = xy2position((x + SX - 1) % SX, (y + 1) % SY)
+    # 左上
+    p8 = xy2position((x + 1) % SX, (y + SY - 1) % SY)
+    p = [p1, p2, p3, p4, p5, p6, p7, p8]
+    return p
+
+
 class Model(dict):
 
     def __init__(self, dic) -> None:
@@ -67,6 +90,7 @@ class Model(dict):
         self.update({MATRIX_2_LM: ms[0]})
         self.update({CONSTANT_S: SX * SY})
 
+    # 返回（起，终，任务数）
     def createTaskAllocate(self, point: list):
         route = []
         remain = self.get(CONSTANT_F)
@@ -88,3 +112,14 @@ class Model(dict):
                     continue
                 if l == self.get(MATRIX_2_LM)[i][j]:
                     return i, j
+
+
+    def getAdjArrayWithLink(self, position: int, routes):
+        p = getAdjArray(position)
+        remove_list = []
+        for i in range(len(p)):
+            if routes[self.get(MATRIX_2_LM)[position][p[i]]] != 1:
+                remove_list.append(i)
+        for i in range(len(remove_list)):
+            p.pop(remove_list[i] - i)
+        return p
