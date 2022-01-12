@@ -15,8 +15,8 @@ MATRIX_2_LM = 'matrix_2_lm'
 # 流量大小
 ARRAY_DK = 'array_dk'
 
-SX = 3
-SY = 4
+SX = 10
+SY = 20
 
 
 def position2xy(pos: int):
@@ -27,6 +27,7 @@ def xy2position(x, y):
     return int(x * SY + y)
 
 
+# 创建固定链路，并为所有链路添加序号
 def createMartixLW():
     s = SX * SY
     # 定义
@@ -89,6 +90,16 @@ class Model(dict):
         self.update({ARRAY_L: ms[1]})
         self.update({MATRIX_2_LM: ms[0]})
         self.update({CONSTANT_S: SX * SY})
+        self.allocate_near = []
+        self.allocate_remote = []
+
+    def notify(self, dic):
+        # 修改dic
+        self.update(dic)
+        ms = createMartixLW()
+        self.update({ARRAY_L: ms[1]})
+        self.update({MATRIX_2_LM: ms[0]})
+        self.update({CONSTANT_S: SX * SY})
 
     # 返回（起，终，任务数）
     def createTaskAllocate(self, point: list):
@@ -105,6 +116,21 @@ class Model(dict):
         route[len(route) - 1] = (route[len(route) - 1][0], route[len(route) - 1][1], route[len(route) - 1][2] + remain)
         return route
 
+    # 返回（起，终，任务数） 固定版
+    def createTaskAllocateFix(self, point: list):
+        route = []
+        remain = self.get(CONSTANT_F)
+        road = int(len(point) * (len(point) - 1) / 2)
+        position = 0
+        allocation = [3,5,1,2,7, 2,1,3,4,3, 5,3,4,2,5]
+        for i in range(len(point)):
+            for j in range(len(point)):
+                if j > i:
+                    route.append((point[i], point[j], allocation[position]))
+                    position += 1
+        # route[len(route) - 1] = (route[len(route) - 1][0], route[len(route) - 1][1], route[len(route) - 1][2] + remain)
+        return route
+
     def link2position(self, l: int):
         for i in range(self.get(CONSTANT_S)):
             for j in range(self.get(CONSTANT_S)):
@@ -113,13 +139,45 @@ class Model(dict):
                 if l == self.get(MATRIX_2_LM)[i][j]:
                     return i, j
 
-
     def getAdjArrayWithLink(self, position: int, routes):
         p = getAdjArray(position)
         remove_list = []
         for i in range(len(p)):
-            if routes[self.get(MATRIX_2_LM)[position][p[i]]] != 1:
-                remove_list.append(i)
+            if routes[self.get(MATRIX_2_LM)[position][p[i]]] == 0:
+                remove_list.append(p[i])
         for i in range(len(remove_list)):
-            p.pop(remove_list[i] - i)
+            for j in range(len(p)):
+                if p[j] == remove_list[i]:
+                    p.pop(j)
+                    break
         return p
+
+    def getU(self, matrix):
+        links = [0 for i in range(len(self.get(ARRAY_L)))]
+        for i in range(self.get(CONSTANT_F)):
+            for j in range(len(self.get(ARRAY_L))):
+                for k in range(2):
+                    if matrix[i][j][0] == 1 or matrix[i][j][1] == 1:
+                        links[j] += 1
+        max_link = 0
+        for link in links:
+            if max_link <= link:
+                max_link = link
+        return max_link * self.get(CONSTANT_DK) / self.get(CONSTANT_C)
+
+
+imodel = Model({CONSTANT_C: 1000, CONSTANT_DK: 150})
+# 3 * 4
+near_array = [xy2position(0, 0), xy2position(0, 1), xy2position(1, 1), xy2position(1, 2), xy2position(2, 2),
+              xy2position(2, 3)]
+# 10 * 20
+remote_array = [xy2position(5, 10), xy2position(7, 15), xy2position(8, 5), xy2position(3, 14), xy2position(2, 6),
+                xy2position(0, 0)]
+
+# imodel.createTaskAllocate([
+# xy2position(0, 0), xy2position(0, 1), xy2position(1, 1), xy2position(1, 2), xy2position(2, 2),
+# xy2position(2, 3)])
+
+# imodel.createTaskAllocate([
+# xy2position(12, 30), xy2position(3, 13), xy2position(4, 55), xy2position(17, 15), xy2position(18, 57),
+# xy2position(8, 46)])

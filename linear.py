@@ -5,17 +5,17 @@ from Model import *
 import pulp
 
 # 定流变包,定包变流,跳数图,多端点
-idic = {CONSTANT_C: 1000, CONSTANT_F: 50, CONSTANT_DK: 150}
-imodel = Model(idic)
+# idic = {CONSTANT_C: 1000, CONSTANT_F: 50, CONSTANT_DK: 150}
+# imodel = Model(idic)
 # allocate_near = imodel.createTaskAllocate([
 #     xy2position(12, 30), xy2position(14, 41), xy2position(8, 29), xy2position(10, 21), xy2position(11, 33),
 #     xy2position(15, 38)])
-allocate_near = imodel.createTaskAllocate([
-    xy2position(0, 0), xy2position(0, 1), xy2position(1, 1), xy2position(1, 2), xy2position(2, 2),
-    xy2position(2, 3)])
-allocate_remote = imodel.createTaskAllocate([
-    xy2position(12, 30), xy2position(3, 13), xy2position(4, 55), xy2position(17, 15), xy2position(18, 57),
-    xy2position(8, 46)])
+# allocate_near = imodel.createTaskAllocate([
+#     xy2position(0, 0), xy2position(0, 1), xy2position(1, 1), xy2position(1, 2), xy2position(2, 2),
+#     xy2position(2, 3)])
+# allocate_remote = imodel.createTaskAllocate([
+#     xy2position(12, 30), xy2position(3, 13), xy2position(4, 55), xy2position(17, 15), xy2position(18, 57),
+#     xy2position(8, 46)])
 
 
 def loadFDK(n, dic: dict):
@@ -92,8 +92,8 @@ def linearOpt(dic):
         prob += s * imodel.get(CONSTANT_DK) <= u * imodel.get(CONSTANT_C)
     # c7 c8,task记录已经安排的任务数
     task = 0
-    for i in range(len(allocate_near)):
-        (start, end, tasks) = allocate_near[i]
+    for i in range(len(imodel.allocate_near)):
+        (start, end, tasks) = imodel.allocate_near[i]
         for j in range(tasks):
             p = getAdjArray(start)
             outs = 0
@@ -124,8 +124,8 @@ def linearOpt(dic):
             task += 1
     # c9  i+j一共遍历100次，等同于遍历任务队列 补：若限制中间点，每个点的出入度都为1，则可以解决环路的问题
     task = 0
-    for i in range(len(allocate_near)):
-        (start, end, tasks) = allocate_near[i]
+    for i in range(len(imodel.allocate_near)):
+        (start, end, tasks) = imodel.allocate_near[i]
         for j in range(tasks):
             # tar对应论文中的i
             for tar in range(imodel.get(CONSTANT_S)):
@@ -174,16 +174,17 @@ def linearOpt(dic):
                     else:
                         routes.append((b, a))
         result.append(routes)
-    print(result)
-    print(allocate_near)
     result_l = []
     for i in range(len(variables_l)):
         result_l.append(variables_l[i].value())
     checkup(result_z, result_l)
-    print(u.value())
+    jumps = 0
+    for i in range(len(result)):
+        jumps += len(result[i])
+    return u.value(), int(jumps / len(result))
 
 
-linearOpt({})
+# linearOpt({})
 # print(pulp.list_solvers(onlyAvailable=True))
 
 
