@@ -139,41 +139,41 @@ def _iter(start, to):
         yield i
 
 
-def func2(fn):
-    imodel.update({CONSTANT_F: fn})
-    imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-    result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
-    with open("big_dkc_fd/" + str(fn), "w") as file:
-        file.write(result)
-
-
-def func3(dkn):
-    imodel.update({CONSTANT_DK: dkn * 2 + 70})
-    result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
-    with open("big_fc_dkd/" + str(dkn), "w") as file:
-        file.write(result)
-
-
-def run(i):
-    if i == 0:
-        imodel.notify({})
-        imodel.update({CONSTANT_DK: 150})
-        pool = Pool(processes=36)
-        pool.map(func2, _iter(15, 51))
-    else:
-        imodel.notify({})
-        imodel.update({CONSTANT_F: 50})
-        pool = Pool(processes=40)
+def func(fn):
+    if fn <= 40:
+        imodel.update({CONSTANT_F: fn})
         imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-        pool.map(func3, _iter(1, 41))
+        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+        with open("big_dkc_fd/" + str(fn), "w") as file:
+            file.write(result)
 
 
-def start():
-    pool = Pool(processes=2)
-    pool.map(run, _iter(0, 2))
+def func(position):
+    if position <= 40:
+        imodel.update({CONSTANT_F: 50})
+        imodel.update({CONSTANT_DK: position * 2 + 70})
+        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+        with open("big_fc_dkd/" + str(position), "w") as file:
+            file.write(result)
+    else:
+        imodel.update({CONSTANT_F: position - 40 + 14})
+        imodel.update({CONSTANT_DK: 150})
+        imodel.notify({})
+        imodel.allocate_near = imodel.createTaskAllocate(remote_array)
+        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+        with open("big_dkc_fd/" + str(position - 40 + 14), "w") as file:
+            file.write(result)
 
-#
+
+def run():
+    imodel.update({CONSTANT_F: 50})
+    imodel.notify({})
+    pool = Pool(processes=77)
+    imodel.allocate_near = imodel.createTaskAllocate(remote_array)
+    pool.map(func, _iter(1, 78))
+
+
 if __name__ == '__main__':
     freeze_support()
-    start()
+    run()
 
