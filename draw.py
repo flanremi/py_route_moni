@@ -154,19 +154,26 @@ def func3(dkn):
         file.write(result)
 
 
-def run():
-    imodel.notify({})
-    imodel.update({CONSTANT_DK: 150})
-    pool = Pool(processes=5)
-    pool.map(func2, _iter(13, 51))
+def run(i):
+    if i == 0:
+        imodel.notify({})
+        imodel.update({CONSTANT_DK: 150})
+        pool = Pool(processes=36)
+        pool.map(func2, _iter(15, 51))
+    else:
+        imodel.notify({})
+        imodel.update({CONSTANT_F: 50})
+        pool = Pool(processes=40)
+        imodel.allocate_near = imodel.createTaskAllocate(remote_array)
+        pool.map(func3, _iter(1, 41))
 
-    imodel.notify({})
-    imodel.update({CONSTANT_F: 50})
-    imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-    pool.map(func3, _iter(1, 41))
+
+def start():
+    pool = Pool(processes=2)
+    pool.map(run, _iter(0, 2))
 
 
 if __name__ == '__main__':
     freeze_support()
-    run()
+    start()
 
