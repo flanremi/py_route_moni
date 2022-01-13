@@ -16,8 +16,8 @@ from Model import *
 #     xy2position(12, 30), xy2position(3, 13), xy2position(4, 55), xy2position(17, 15), xy2position(18, 57),
 #     xy2position(8, 46)])
 
-iterator_max = 50
-particle_num = 100
+iterator_max = 40
+particle_num = 50
 
 
 def createParticle(lengthX, lengthY):
@@ -325,6 +325,7 @@ def update2():
                 particles[particle][task][2] = pathSs[particles[particle][task][0]][particles[particle][task][1]][
                     int((xp + vPD[particle][task])) % len(
                         pathSs[particles[particle][task][0]][particles[particle][task][1]])]
+        print(u_best[0])
     tmp_jump = 0
     for i in range(len(u_best[1])):
         tmp_jump += len(u_best[1][i][2])

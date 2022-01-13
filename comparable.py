@@ -64,7 +64,7 @@ def getPath(routes, start, end):
     adj_stack = [imodel.getAdjArrayWithLink(start, routes)]
     (x1, y1) = position2xy(start)
     (x2, y2) = position2xy(end)
-    path_shortest = (abs(x2 - x1) % SX + abs(y2 - y1) % SY) + 1
+    path_shortest = (abs(x2 - x1) % (int(SX / 2) + 1) + abs(y2 - y1) % (int(SY / 2) + 1)) + 2
     while len(path_stack):
         adj_points = adj_stack[len(adj_stack) - 1]
         if len(adj_points) != 0:
@@ -106,7 +106,7 @@ def getPathPoint(routes, start, end):
     adj_stack = [imodel.getAdjArrayWithLink(start, routes)]
     (x1, y1) = position2xy(start)
     (x2, y2) = position2xy(end)
-    path_shortest = (abs(x2 - x1) % SX + abs(y2 - y1) % SY) + 1
+    path_shortest = abs(x2 - x1) % (int(SX / 2) + 1) + abs(y2 - y1) % (int(SY / 2) + 1) + 2
     while len(path_stack):
         adj_points = adj_stack[len(adj_stack) - 1]
         if len(adj_points) != 0:
@@ -160,6 +160,7 @@ def getResult():
     tmp_jump = 0
     for i in range(len(tmp_path)):
         tmp_jump += len(tmp_path[i])
+    print(max_used)
     return max_used * imodel.get(CONSTANT_DK) / imodel.get(CONSTANT_C), tmp_jump / len(tmp_path)
     # print("最大信道占用率：" + str(max_used * imodel.get(CONSTANT_DK) / imodel.get(CONSTANT_C)))
 

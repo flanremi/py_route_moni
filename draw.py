@@ -139,13 +139,13 @@ def _iter(start, to):
         yield i
 
 
-def func(fn):
-    if fn <= 40:
-        imodel.update({CONSTANT_F: fn})
-        imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
-        with open("big_dkc_fd/" + str(fn), "w") as file:
-            file.write(result)
+# def func(fn):
+#     if fn <= 40:
+#         imodel.update({CONSTANT_F: fn})
+#         imodel.allocate_near = imodel.createTaskAllocate(remote_array)
+#         result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+#         with open("big_dkc_fd/" + str(fn), "w") as file:
+#             file.write(result)
 
 
 def func(position):
@@ -154,25 +154,25 @@ def func(position):
         imodel.update({CONSTANT_DK: position * 2 + 70})
         imodel.notify({})
         imodel.allocate_near = imodel.createTaskAllocateFix(remote_array)
-        result = str(str(getResult()[0]) + " " + str(update2()[0] + " " + linearOpt(imodel)[0]))
+        result = str(getResult()[0]) + " " + str(update2()[0]) + " " + str(linearOpt(imodel)[0])
         with open("big_fc_dkd/" + str(position), "w") as file:
             file.write(result)
     else:
-        imodel.update({CONSTANT_F: position - 40 + 14})
+        imodel.update({CONSTANT_F: position - 40 + 10})
         imodel.update({CONSTANT_DK: 150})
         imodel.notify({})
         imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-        result = str(str(getResult()[0]) + " " + str(update2()[0] + " " + linearOpt(imodel)[0]))
-        with open("big_dkc_fd/" + str(position - 40 + 14), "w") as file:
+        result = str(getResult()[0]) + " " + str(update2()[0]) + " " + str(linearOpt(imodel)[0])
+        with open("big_dkc_fd/" + str(position - 40 + 10), "w") as file:
             file.write(result)
 
 
 def run():
     imodel.update({CONSTANT_F: 50})
     imodel.notify({})
-    pool = Pool(processes=77)
+    pool = Pool(processes=40)
     imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-    pool.map(func, _iter(1, 78))
+    pool.map(func, _iter(1, 81))
 
 
 if __name__ == '__main__':
