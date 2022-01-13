@@ -152,7 +152,9 @@ def func(position):
     if position <= 40:
         imodel.update({CONSTANT_F: 50})
         imodel.update({CONSTANT_DK: position * 2 + 70})
-        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+        imodel.notify({})
+        imodel.allocate_near = imodel.createTaskAllocateFix(remote_array)
+        result = str(str(getResult()[0]) + " " + str(update2()[0] + " " + linearOpt(imodel)[0]))
         with open("big_fc_dkd/" + str(position), "w") as file:
             file.write(result)
     else:
@@ -160,7 +162,7 @@ def func(position):
         imodel.update({CONSTANT_DK: 150})
         imodel.notify({})
         imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+        result = str(str(getResult()[0]) + " " + str(update2()[0] + " " + linearOpt(imodel)[0]))
         with open("big_dkc_fd/" + str(position - 40 + 14), "w") as file:
             file.write(result)
 
@@ -176,4 +178,3 @@ def run():
 if __name__ == '__main__':
     freeze_support()
     run()
-
