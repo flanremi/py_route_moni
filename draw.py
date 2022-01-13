@@ -8,7 +8,7 @@ from linear import *
 from comparable import *
 from pso import *
 from Model import *
-from multiprocessing import Pool
+from multiprocessing import Pool, freeze_support
 
 matplotlib.use("Agg")
 
@@ -134,31 +134,39 @@ def collectData(type: int):
         #     file.write(json.dumps({'u1': u1, 'u2': u2, 'u3': u3}))
 
 
+def _iter(start, to):
+    for i in range(start, to):
+        yield i
+
+
+def func2(fn):
+    imodel.update({CONSTANT_F: fn})
+    imodel.allocate_near = imodel.createTaskAllocate(remote_array)
+    result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+    with open("big_dkc_fd/" + str(fn), "w") as file:
+        file.write(result)
+
+
+def func3(dkn):
+    imodel.update({CONSTANT_DK: dkn * 2 + 70})
+    result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
+    with open("big_fc_dkd/" + str(dkn), "w") as file:
+        file.write(result)
+
+
 def run():
     imodel.notify({})
     imodel.update({CONSTANT_DK: 150})
-
-    def func2(fn):
-        imodel.update({CONSTANT_F: fn})
-        imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
-        with open("big_dkc_fd/" + str(fn), "w") as file:
-            file.write(result)
-
-    pool = Pool(processes=77)
-    pool.map(func2, range(13, 51))
+    pool = Pool(processes=5)
+    pool.map(func2, _iter(13, 51))
 
     imodel.notify({})
     imodel.update({CONSTANT_F: 50})
     imodel.allocate_near = imodel.createTaskAllocate(remote_array)
-
-    def func3(dkn):
-        imodel.update({CONSTANT_DK: dkn * 2 + 70})
-        result = str(linearOpt(imodel)[0]) + " " + str(getResult()[0]) + " " + str(update2()[0])
-        with open("big_fc_dkd/" + str(dkn), "w") as file:
-            file.write(result)
-
-    pool.map(func3, range(1, 41))
+    pool.map(func3, _iter(1, 41))
 
 
-run()
+if __name__ == '__main__':
+    freeze_support()
+    run()
+
