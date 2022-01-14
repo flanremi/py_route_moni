@@ -15,8 +15,8 @@ MATRIX_2_LM = 'matrix_2_lm'
 # 流量大小
 ARRAY_DK = 'array_dk'
 
-SX = 8
-SY = 14
+SX = 7
+SY = 13
 
 
 def position2xy(pos: int):
@@ -170,7 +170,7 @@ imodel = Model({CONSTANT_C: 1000, CONSTANT_DK: 150})
 # 3 * 4
 near_array = [xy2position(0, 0), xy2position(0, 1), xy2position(1, 1), xy2position(1, 2), xy2position(2, 2),
               xy2position(2, 3)]
-# 8 * 14
+# 7 * 13
 remote_array = [xy2position(4, 7), xy2position(6, 10), xy2position(6, 2), xy2position(2, 12), xy2position(2, 3),
                 xy2position(0, 0)]
 # remote_array = [xy2position(4, 7),

@@ -64,7 +64,15 @@ def getPath(routes, start, end):
     adj_stack = [imodel.getAdjArrayWithLink(start, routes)]
     (x1, y1) = position2xy(start)
     (x2, y2) = position2xy(end)
-    path_shortest = (abs(x2 - x1) % (int(SX / 2) + 1) + abs(y2 - y1) % (int(SY / 2) + 1)) + 2
+    if abs(x2 - x1) > int(SX / 2):
+        x_dis = SX - abs(x2 - x1)
+    else:
+        x_dis = abs(x2 - x1)
+    if abs(y2 - y1) > int(SY / 2):
+        y_dis = SY - abs(y2 - y1)
+    else:
+        y_dis = abs(y2 - y1)
+    path_shortest = x_dis + y_dis + 2
     while len(path_stack):
         adj_points = adj_stack[len(adj_stack) - 1]
         if len(adj_points) != 0:
@@ -106,7 +114,15 @@ def getPathPoint(routes, start, end):
     adj_stack = [imodel.getAdjArrayWithLink(start, routes)]
     (x1, y1) = position2xy(start)
     (x2, y2) = position2xy(end)
-    path_shortest = abs(x2 - x1) % (int(SX / 2) + 1) + abs(y2 - y1) % (int(SY / 2) + 1) + 2
+    if abs(x2 - x1) > int(SX / 2):
+        x_dis = SX - abs(x2 - x1)
+    else:
+        x_dis = abs(x2 - x1)
+    if abs(y2 - y1) > int(SY / 2):
+        y_dis = SY - abs(y2 - y1)
+    else:
+        y_dis = abs(y2 - y1)
+    path_shortest = x_dis + y_dis + 2
     while len(path_stack):
         adj_points = adj_stack[len(adj_stack) - 1]
         if len(adj_points) != 0:
