@@ -72,7 +72,7 @@ def getPath(routes, start, end):
         y_dis = SY - abs(y2 - y1)
     else:
         y_dis = abs(y2 - y1)
-    path_shortest = x_dis + y_dis + 2
+    path_shortest = x_dis + y_dis + 1
     while len(path_stack):
         adj_points = adj_stack[len(adj_stack) - 1]
         if len(adj_points) != 0:
@@ -122,7 +122,7 @@ def getPathPoint(routes, start, end):
         y_dis = SY - abs(y2 - y1)
     else:
         y_dis = abs(y2 - y1)
-    path_shortest = x_dis + y_dis + 2
+    path_shortest = x_dis + y_dis + 1
     while len(path_stack):
         adj_points = adj_stack[len(adj_stack) - 1]
         if len(adj_points) != 0:
